@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Student</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/edit.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <h1>Edit Student</h1>
+        <form action="/edit_student/{{ index }}" method="POST">
+            <div class="form-group">
+                <label for="name">Student Name:</label>
+                <input type="text" id="name" name="name" value="{{ student.name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="course">Course:</label>
+                <input type="text" id="course" name="course" value="{{ student.course }}" required>
+            </div>
+            <div class="form-group">
+                <label for="roll">Roll Number:</label>
+                <input type="text" id="roll" name="roll" value="{{ student.roll }}" required>
+            </div>
+            <div class="form-group">
+                <label for="sec">Section:</label>
+                <input type="text" id="sec" name="sec" value="{{ student.sec }}" required>
+            </div>
+            <div class="form-group">
+                <label for="year">Year:</label>
+                <input type="text" id="year" name="year" value="{{ student.year }}" required pattern="[1-6]" title="Year should be 1,2,3,4,5,6">
+            </div>
+            <div class="form-group">
+                <label for="cgpa">CGPA:</label>
+                <input type="number" id="cgpa" step="0.01" name="cgpa" value="{{ student.cgpa }}" required>
+            </div>
+            <div id="additional-fields">
+                {% for key, value in student.additional.items() %}
+                <div class="input-group">
+                    <label for="{{ key }}">{{ key }}:</label>
+                    <input type="text" name="{{ key }}" value="{{ value }}">
+                </div>
+                {% endfor %}
+            </div>
+            <button type="submit">Update Student</button>
+        </form>
+        <div class="button-group">
+            <button>
+                <a href="/view_students">Cancel</a>
+            </button>
+        </div>
+    </div>
+</body>
+</html>

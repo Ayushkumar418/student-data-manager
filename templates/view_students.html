@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Students</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/view.ico') }}" type="image/x-icon">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        function searchTable() {
+            const searchInput = document.getElementById("search-bar").value.toLowerCase();
+            const rows = document.querySelectorAll("tbody tr");
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll("td");
+                let matchFound = false;
+
+                cells.forEach(cell => {
+                    if (cell.textContent.toLowerCase().includes(searchInput)) {
+                        matchFound = true;
+                    }
+                });
+
+                row.style.display = matchFound ? "" : "none";
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <h1>Student Records</h1>
+
+        <!-- Search Bar -->
+        <input
+            type="text"
+            id="search-bar"
+            placeholder="Search by any field (Name, Course, etc.)"
+            onkeyup="searchTable()"
+            class="search-input"
+        >
+
+        <table>
+            <thead>
+                <tr>
+                    <th>S.N.</th>
+                    <th>Name</th>
+                    <th>Course</th>
+                    <th>Roll No.</th>
+                    <th>Section</th>
+                    <th>Year</th>
+                    <th>CGPA</th>
+                    <th>Additional Fields</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <!-- Serial Number -->
+                    <td>{{ loop.index }}</td>
+                    <td>{{ student.name }}</td>
+                    <td>{{ student.course }}</td>
+                    <td>{{ student.roll }}</td>
+                    <td>{{ student.sec }}</td>
+                    <td>{{ student.year }}</td>
+                    <td>{{ student.cgpa }}</td>
+                    <td class="additional-fields">
+                        {% for key, value in student.additional.items() %}
+                            {% if value %}
+                                {% set field_name = key.replace('additional_field_', '') %}
+                                <div class="field-item">
+                                    <span class="field-name">{{ field_name }}</span>
+                                    <span class="field-value">{{ value }}</span>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <button onclick="window.location.href='/edit_student/{{ loop.index0 }}'" class="action-button">Edit</button>
+                        <button onclick="window.location.href='/delete_student/{{ loop.index0 }}'" class="action-button delete">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button onclick="window.location.href='/'">Back to Add Students</button>
+        <button onclick="window.location.href='/statistics'" class="stats-button">View Statistics</button>
+        <hr>
+        <div class="actions">
+            <button>
+                <a href="{{ url_for('export_students') }}" class="button">Export to Excel</a>
+            </button>
+            <button>
+                <a href="{{ url_for('download_template') }}" class="button">Download Template</a>
+            </button>
+            <form action="{{ url_for('import_students') }}" method="POST" enctype="multipart/form-data" class="import-form">
+                <input type="file" name="file" accept=".xlsx,.xls" class="file-input">
+                <button type="submit" >Import Excel</button>
+            </form>
+        </div>
+
+    </div>
+</body>
+</html>

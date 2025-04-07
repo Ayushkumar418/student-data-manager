@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Statistics</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/data.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Student Statistics</h1>
+        
+        <div class="stats-card">
+            <h2>General Statistics</h2>
+            <p>Total Students: {{ stats.total_students }}</p>
+            <p>Average CGPA: {{ "%.2f"|format(stats.average_cgpa) }}</p>
+        </div>
+
+        <div class="stats-card">
+            <h2>Students by Course</h2>
+            <ul>
+                {% for course, count in stats.courses.items() %}
+                <li>{{ course }}: {{ count }} students</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="stats-card">
+            <h2>Students by Year</h2>
+            <ul>
+                {% for year, count in stats.years.items() %}
+                <li>Year {{ year }}: {{ count }} students</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="actions">
+            <button>
+                <a href="{{ url_for('export_students') }}" class="button">Export to Excel</a>
+            </button>
+            <form action="{{ url_for('import_students') }}" method="POST" enctype="multipart/form-data" class="import-form">
+                <input type="file" name="file" accept=".xlsx,.xls" class="file-input">
+                <button type="submit" class="button">Import Excel</button>
+            </form>
+            <button onclick="window.location.href='/view_students'"> Back to Students List</button>
+        </div>
+    </div>
+
+    <style>
+
+    </style>
+</body>
+</html>

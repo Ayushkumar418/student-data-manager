@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        function addField() {
+            const container = document.getElementById('additional-fields');
+            const fieldCount = container.children.length + 1;
+
+            const inputGroup = document.createElement('div');
+            inputGroup.classList.add('input-group');
+
+            // Field name input
+            const nameLabel = document.createElement('label');
+            nameLabel.innerText = 'Field Name:';
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.id = `field_name_${fieldCount}`;
+            nameInput.placeholder = 'Enter field name';
+            nameInput.required = true;
+            
+            // Add event listener to update the value input name based on field name
+            nameInput.addEventListener('input', function() {
+                const cleanName = this.value.trim().replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+                valueInput.name = `additional_field_${cleanName}`;
+            });
+
+            // Field value input
+            const valueLabel = document.createElement('label');
+            valueLabel.innerText = 'Field Value:';
+            const valueInput = document.createElement('input');
+            valueInput.type = 'text';
+            valueInput.id = `field_value_${fieldCount}`;
+            valueInput.placeholder = 'Enter value';
+            valueInput.required = true;
+
+            // Add remove button
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.className = 'remove-field';
+            removeButton.innerHTML = '&times;';
+            removeButton.onclick = function() {
+                inputGroup.remove();
+            };
+
+            inputGroup.appendChild(nameLabel);
+            inputGroup.appendChild(nameInput);
+            inputGroup.appendChild(valueLabel);
+            inputGroup.appendChild(valueInput);
+            inputGroup.appendChild(removeButton);
+            container.appendChild(inputGroup);
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <h1>Student Management System</h1>
+        <form action="/add_student" method="POST">
+            <div class="input-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" placeholder="Name" required pattern="[A-Za-z\s]+" title="Name should only contain letters and spaces">
+                
+                <label for="course">Course:</label>
+                <select id="course" name="course" required>
+                    <option value="">Select Course</option>
+                    <option value="B.Tech">B.Tech</option>
+                    <option value="M.Tech">M.Tech</option>
+                    <option value="BCA">BCA</option>
+                    <option value="MCA">MCA</option>
+                    <option value="BBA">BBA</option>
+                    <option value="MBA">MBA</option>
+                    <option value="BSc">BSc</option>
+                    <option value="MSc">MSc</option>
+                </select>
+                
+                <label for="roll">Roll No:</label>
+                <input type="text" id="roll" name="roll" placeholder="Roll No." required>
+                
+                <label for="sec">Section:</label>
+                <input type="text" id="sec" name="sec" placeholder="Section" required pattern="[A-Za-z]" title="Section should only contain letters">
+                
+                <label for="year">Year:</label>
+                <select id="year" name="year" required>
+                    <option value="">Select Year</option>
+                    <option value="1">1st Year</option>
+                    <option value="2">2nd Year</option>
+                    <option value="3">3rd Year</option>
+                    <option value="4">4th Year</option>
+                    <option value="5">5th Year</option>
+                </select>
+                
+                <label for="cgpa">CGPA:</label>
+                <input type="number" id="cgpa" step="0.01" name="cgpa" placeholder="CGPA (0-10)" required min="0" max="10">
+            </div>
+            <div id="additional-fields"></div>
+            <div class="form-actions">
+                <button type="button" onclick="addField()" class="primary-button">Add More Fields</button>
+                <button type="submit" class="primary-button">Add Student</button>
+                <button onclick="window.location.href='/view_students'" type="button">View Students</button></button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
